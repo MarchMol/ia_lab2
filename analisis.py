@@ -57,3 +57,26 @@ def ej3_plots(title, data):
     ax[1,1].plot([min,max],[min,max],'r-')
 
     plt.show()
+
+def ej3_ks(title, data):
+    # Extracción del primer dígito
+    data = data.apply(str).str.extract(r'([1-9])')[0]
+    data = np.array(data.apply(int))
+
+    # Distribuciones
+    digits = np.arange(1, 10)
+    theorical_prob = np.log10(1+1/digits)   # P Masa
+    benford_cdf = np.cumsum(theorical_prob) # P Acumulada
+
+    # Kolmogorov-Smirnov
+    print(title)
+    d_ks, p_ks = st.ks_1samp(x=data,cdf=(lambda x: benford_cdf[x-1]))
+    print(f"K-S: {d_ks:.4f}")
+    print(f"P: {p_ks:.10f}")
+
+    # Chi Cuadrado
+    observed_counts = np.array([(data == d).sum() for d in digits])
+    expected_counts = theorical_prob*len(data)
+    chi2, p_chi2 = st.chisquare(f_obs=observed_counts, f_exp=expected_counts)
+    print(f"Chi Cuadrado: {chi2:.4f}")
+    print(f"P: {p_chi2:.4f}")
