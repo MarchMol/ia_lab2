@@ -69,14 +69,16 @@ def ej3_ks(title, data):
     benford_cdf = np.cumsum(theorical_prob) # P Acumulada
 
     # Kolmogorov-Smirnov
-    print(title)
+    print(' - ',title)
     d_ks, p_ks = st.ks_1samp(x=data,cdf=(lambda x: benford_cdf[x-1]))
+    print('Prueba Kolmogorov-Smirnov')
     print(f"K-S: {d_ks:.4f}")
-    print(f"P: {p_ks:.10f}")
+    print(f"P: {p_ks:.10f}\n")
 
     # Chi Cuadrado
     observed_counts = np.array([(data == d).sum() for d in digits])
     expected_counts = theorical_prob*len(data)
     chi2, p_chi2 = st.chisquare(f_obs=observed_counts, f_exp=expected_counts)
+    print('Prueba Chi Cuadrado')
     print(f"Chi Cuadrado: {chi2:.4f}")
     print(f"P: {p_chi2:.4f}")
