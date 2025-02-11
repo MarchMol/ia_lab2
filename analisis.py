@@ -82,3 +82,38 @@ def ej3_ks(title, data):
     print('Prueba Chi Cuadrado')
     print(f"Chi Cuadrado: {chi2:.4f}")
     print(f"P: {p_chi2:.4f}")
+    
+def ej4_pairplot(mu0, sig0, n, d):
+    # Checkeo de covarianza
+    is_symmetric = np.allclose(sig0, sig0.T)
+    eigval_pos = np.all(np.linalg.eigvals(sig0)>=0)
+    
+    if (is_symmetric and eigval_pos):
+        # Creación de distribución
+        Z = np.random.multivariate_normal(mu0, sig0, size=n)
+        
+        # Cálculo:
+        exp_mean = np.mean(Z,axis=0)
+        print('Media')
+        print('- Exp: ',exp_mean.round(decimals=3))
+        print('- Teo: ',mu0)
+        exp_cov = np.cov(Z, rowvar=0)
+        exp_cov.round(decimals=2)
+        print('Covarianza')
+        print('- Exp: \n',exp_cov.round(decimals=3))
+        print('- Teo: \n',sig0)
+        
+        # Pairplot
+        plt.figure(figsize=(8,8))
+        for i in range(0, d):
+            for j in range(0, d):
+                plt.subplot(d, d, d*i+j+1)
+                if (i==j):
+                    sns.histplot(Z[:,i], kde=True)
+                else:
+                    plt.hist2d(Z[:,j], Z[:,i], bins=(40,40), cmap=plt.cm.jet)
+        plt.show()
+    else:
+        print('Matriz de covarianza no es simétrica o no tiene eigenvalores positivos')
+    
+    
